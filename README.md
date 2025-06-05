@@ -20,13 +20,14 @@
 - 라이브러리 버전 통일 (requirements.txt로 관리)
 
 ✅ **네이밍 규칙**
-| 요소         | 규칙                                  | 예시               |
-|-------------|-------------------------------------|-------------------|
-| 변수         | snake_case                          | click_count, user_id |
-| 함수         | snake_case + 동사 중심             | send_click_data(), get_top10() |
-| 클래스       | PascalCase                          | ClickerWindow, UserManager |
-| 상수         | UPPER_SNAKE_CASE                   | DEFAULT_IMAGE_PATH, MAX_CLICK |
-| 모듈/파일명   | snake_case                          | game_window.py, api_server.py |
+
+| 요소     | 규칙                 | 예시                             |
+|--------|--------------------|--------------------------------|
+| 변수     | snake_case         | click_count, user_id           |
+| 함수     | snake_case + 동사 중심 | send_click_data(), get_top10() |
+| 클래스    | PascalCase         | ClickerWindow, UserManager     |
+| 상수     | UPPER_SNAKE_CASE   | DEFAULT_IMAGE_PATH, MAX_CLICK  |
+| 모듈/파일명 | snake_case         | game_window.py, api_server.py  |
 
 ✅ **코딩 스타일**
 - [PEP8](https://peps.python.org/pep-0008/) 기본 준수
