@@ -87,10 +87,10 @@ function showToast(message) {
   }, 3000);
 }
 
-const inventoryModal = document.getElementById("inventory-modal");
+const inventoryDrawer = document.getElementById("inventory-drawer");
+const inventoryList = document.getElementById("inventory-list");
 const inventoryBtn = document.getElementById("inventory-btn");
 const closeInventoryBtn = document.getElementById("close-inventory");
-const inventoryList = document.getElementById("inventory-list");
 
 inventoryBtn.addEventListener("click", () => {
   fetch(`/image/list?uuid=${uuid}`)
@@ -107,7 +107,7 @@ inventoryBtn.addEventListener("click", () => {
           inventoryList.appendChild(img);
         });
       }
-      inventoryModal.classList.remove("hidden");
+      inventoryDrawer.classList.add("active");
     })
     .catch(err => {
       console.error("인벤토리 불러오기 실패:", err);
@@ -115,5 +115,5 @@ inventoryBtn.addEventListener("click", () => {
 });
 
 closeInventoryBtn.addEventListener("click", () => {
-  inventoryModal.classList.add("hidden");
+  inventoryDrawer.classList.remove("active");
 });
