@@ -31,9 +31,63 @@ def init_db():
     )
     """)
 
+    # 이미지 생성 기록 저장
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS generated_images (
+        image_hash TEXT PRIMARY KEY,
+        name TEXT,
+        prompt TEXT,
+        b64_json TEXT NOT NULL
+    )
+    """)
     conn.commit()
     conn.close()
 
+def add_generated_image(image_hash, name, prompt, b64_json):
+    """
+    Add a newly generated image's data to the database.
+
+    Args:
+        image_hash (str): The SHA-256 hash of the image, used as a primary key.
+        name (str): The generated name for the image.
+        prompt (str): The prompt used to generate the image.
+        b64_json (str): The base64-encoded image data.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    try:
+        c.execute("""
+            INSERT INTO generated_images (image_hash, name, prompt, b64_json)
+            VALUES (?, ?, ?, ?)
+        """, (image_hash, name, prompt, b64_json))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        # 해시가 이미 존재하면 무시
+        pass
+    finally:
+        conn.close()
+
+def get_generated_image(image_hash):
+    """
+    Retrieve a generated image's data by its hash.
+
+    Args:
+        image_hash (str): The SHA-256 hash of the image.
+
+    Returns:
+        Dict[str, str]: Dictionary containing the image's name, prompt, and base64 JSON data.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT name, prompt, b64_json FROM generated_images WHERE image_hash = ?
+    """, (image_hash,))
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        return {"name": row[0], "prompt": row[1], "b64_json": row[2]}
+    return None
 
 def add_clicks(user_uuid, count):
     """

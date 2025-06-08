@@ -1,9 +1,16 @@
 """
 Generate bizarre Italian-themed character names and prompts, and create images using the Nebius API.
 """
+import base64
+import collections
+import hashlib
 import os
 import random
+import time
+
 from openai import OpenAI
+
+from db import add_generated_image
 
 _client = OpenAI(
     base_url="https://api.studio.nebius.com/v1/",
@@ -102,6 +109,62 @@ _styles = [
     "weirdcore aesthetic",
 ]
 
+CACHE_TARGET_SIZE = 5
+IMAGE_CACHE = collections.deque(maxlen=CACHE_TARGET_SIZE)
+
+def _generate_single_image_data():
+    """
+    Generate a single image data entry with a bizarre Italian-themed character name and prompt.
+    :return: dict with name, prompt, and image data
+    """
+    name, prompt = generate_italian_brainrot()
+    response = generate_image(prompt)
+    return {
+        "name": name,
+        "prompt": prompt,
+        "image": response.data[0].b64_json,
+    }
+
+def populate_cache():
+    """
+    Fill the image cache with generated images.
+    :return: None
+    """
+    print("Starting cache population thread...")
+    while True:
+        if len(IMAGE_CACHE) < CACHE_TARGET_SIZE:
+            print(f"Cache size is {len(IMAGE_CACHE)}. Generating a new image...")
+            image_data = _generate_single_image_data()
+            IMAGE_CACHE.append(image_data)
+            print("New image added to cache.")
+        time.sleep(5)
+
+def get_cached_image():
+    """
+    Get an image from the cache, save it to the database, and return its data.
+    If the cache is empty, generate one on-demand.
+    :return: dict with image_id, name, prompt, and image data
+    """
+    try:
+        image_data = IMAGE_CACHE.popleft()
+    except IndexError:
+        print("Cache is empty. Generating an image on-demand.")
+        image_data = _generate_single_image_data()
+
+    b64_json_string = image_data["image"]
+    image_bytes = base64.b64decode(b64_json_string)
+    image_hash = hashlib.sha256(image_bytes).hexdigest()
+
+    add_generated_image(
+        image_hash=image_hash,
+        name=image_data["name"],
+        prompt=image_data["prompt"],
+        b64_json=b64_json_string
+    )
+    print(f"Image {image_hash[:10]}... saved to database.")
+
+    image_data["image_id"] = image_hash
+    return image_data
 
 def generate_italian_brainrot():
     """
@@ -151,7 +214,7 @@ def generate_image(prompt: str):
             "response_extension": "png",
             "width": 1024,
             "height": 1024,
-            "num_inference_steps": 4,
+            "num_inference_steps": 1,
             "negative_prompt": "",
             "seed": -1
         },
