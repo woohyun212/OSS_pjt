@@ -1,6 +1,7 @@
 // === 설정 ===
 const CLICK_SEND_INTERVAL_MS = 5000; // 서버 전송 주기
 const RARE_DROP_CHANCE = 0.01; // 1% 확률로 이미지 획득
+const API_PREFIX = "/api/v1";
 
 // === 상태 ===
 let clickCount = 0;
@@ -20,13 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // === UUID 처리 ===
 function getOrCreateUUID() {
-  const key = "brainrot_uuid";
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(key, id);
+  const key = "user_uuid";
+  const match = document.cookie.match(new RegExp("(^| )" + key + "=([^;]+)"));
+  if (match) {
+    return match[2];
+  } else {
+    const id = crypto.randomUUID();
+    document.cookie = `${key}=${id}; path=/; max-age=31536000`; // 1 year
+    return id;
   }
-  return id;
 }
 
 // === 클릭 처리 ===
@@ -47,7 +50,7 @@ function handleClick() {
 function sendClicksToServer() {
   if (clickDelta === 0) return;
 
-  fetch("/click", {
+  fetch(`${API_PREFIX}/click`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -67,7 +70,7 @@ function sendClicksToServer() {
 function unlockNewImage() {
   showToast("🎉 새로운 브레인롯 이미지 획득!");
 
-  fetch("/image/unlock", {
+  fetch(`${API_PREFIX}/image/unlock`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -120,7 +123,7 @@ const inventoryBtn = document.getElementById("inventory-btn");
 const closeInventoryBtn = document.getElementById("close-inventory");
 
 inventoryBtn.addEventListener("click", () => {
-  fetch(`/image/list?uuid=${uuid}`)
+  fetch(`${API_PREFIX}/inventory`)
     .then(res => res.json())
     .then(images => {
       inventoryList.innerHTML = "";

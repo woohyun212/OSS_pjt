@@ -1,26 +1,61 @@
 """
 이 모듈은 프로젝트의 app.py 실행 모듈
 """
-from flask import Flask, render_template, request, jsonify
 import random
+from flask import Flask, jsonify, request, render_template
+from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
 
 app = Flask(__name__)
+API_PREFIX = "/api/v1/"
 
-# 게임 메인 페이지
 @app.route("/")
 def index():
     """Render the main index page for the Italian Brainrot clicker game."""
     return render_template("index.html")
 
-# 이미지 획득 API
-@app.route("/image/unlock", methods=["POST"])
-def image_unlock():
-    """사용자가 클릭으로 새로운 이미지를 획득했을 때 호출되는 API"""
 
+@app.route(API_PREFIX + "/click", methods=["POST"])
+def handle_click():
+    """
+    Receive and store a user's click count from the client.
+
+    Input (JSON): { "click_count": int }
+    Requires: user_uuid from cookie
+    Output (JSON): { "status": "ok" }
+    """
     data = request.get_json()
-    uuid = data.get("uuid")  # 사용자의 uuid (사용자별 관리하려면 필요)
+    user_uuid = request.cookies.get("user_uuid")
+    click_count = data.get("delta")
+    add_clicks(user_uuid, click_count)
+    return jsonify({"status": "ok"})
 
-    # 예시 이미지 풀 (원하는 이미지 경로로 변경 가능)
+
+@app.route(API_PREFIX + "/inventory", methods=["GET"])
+def inventory():
+    """
+    Retrieve the list of images in the user's inventory.
+
+    Requires: user_uuid from cookie
+    Output (JSON): { "inventory": [ ... ] }
+    """
+    user_uuid = request.cookies.get("user_uuid")
+    _inventory = get_inventory(user_uuid)
+    return jsonify({"inventory": _inventory})
+
+
+@app.route(API_PREFIX + "/image/unlock", methods=["POST"])
+def unlock_image():
+    """
+    Register a newly unlocked image for the user.
+
+    Requires: user_uuid from cookie
+    Output (JSON): { "new_image_id": str }
+    """
+    # data = request.get_json()
+    # user_uuid = request.cookies.get("user_uuid")
+    # new_image_id = "image_" + str(random.randint(100, 999))  # simple mock
+    # add_image_to_inventory(user_uuid, new_image_id)
+    # return jsonify({"new_image_id": new_image_id})
     available_images = [
         "/static/assets/reward1.png",
         "/static/assets/reward2.png",
@@ -33,3 +68,13 @@ def image_unlock():
 
     # JSON 형태로 반환
     return jsonify(reward_image)
+
+@app.route(API_PREFIX + "/world-records", methods=["GET"])
+def world_records():
+    """
+    Return the top 10 users with the highest click counts.
+
+    Output (JSON): [ { "user_uuid": str, "click_count": int }, ... ]
+    """
+    records = get_world_records()
+    return jsonify(records)
