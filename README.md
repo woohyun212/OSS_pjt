@@ -7,9 +7,8 @@
 
 ## 📁 프로젝트 기본 구조
 ```
-/client   → 클라이언트 코드 (PyQt, Tkinter 등)
-/server   → 서버 코드 (Flask)
-/data     → 이미지, 확률표, 설정 파일
+/         → Flask Server
+/static   → html, 이미지 등 정적 파일
 /docs     → 문서, 기획안
 ```
 
@@ -45,8 +44,7 @@
 
 ✅ **브랜치 전략**
 - `main`: 배포/완성 버전
-- `dev`: 개발용 통합 브랜치
-- `feature/xxx`: 각 기능별 작업 브랜치
+- `fea/xxx`: 각 기능별 작업 브랜치
 
 ✅ [**커밋 메시지 스타일**](https://github.com/gyoogle/tech-interview-for-developer/blob/master/ETC/Git%20Commit%20Message%20Convention.md#%EC%BB%A4%EB%B0%8B-%EB%A9%94%EC%8B%9C%EC%A7%80-%ED%98%95%EC%8B%9D)
 - feat : 새로운 기능 추가
@@ -58,8 +56,8 @@
 - chore : 빌드 수정, 패키지 매니저 설정, 운영 코드 변경이 없는 경우 등
 
 ✅ **PR (Pull Request)**
-- 각 feature 브랜치는 dev로 PR
-- PR 설명에: 변경 내용, 테스트 방법, 주의할 점 기재
+- 각 feature 브랜치는 상시 PR
+- PR 설명에: 변경 내용, 주의할 점 정도 간략하게 기재
 
 ---
 
