@@ -1,20 +1,19 @@
 """
-이 모듈은 pylint 테스트 및 프로젝트의 app.py 실행 모듈
+이 모듈은 프로젝트의 app.py 실행 모듈
 """
 from flask import Flask, jsonify, request
 import random
 from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
+from flask import render_template
 
 app = Flask(__name__)
 api_prefix = "/api/v1/"
 
 
 @app.route("/")
-def hello_world():
-    """
-    Hello World Method
-    """
-    return "<p>Hello, World!</p>"
+def index():
+    """Render the main index page for the Italian Brainrot clicker game."""
+    return render_template("index.html")
 
 
 @app.route(api_prefix + "/click", methods=["POST"])
