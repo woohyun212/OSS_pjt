@@ -73,10 +73,37 @@ function unlockNewImage() {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ uuid: uuid })
-  }).catch(err => {
+  })
+  .then(res => res.json())
+  .then(imageUrl => {
+    addImageToInventory(imageUrl);
+  })
+  .catch(err => {
     console.error("이미지 획득 전송 실패:", err);
   });
 }
+
+function addImageToInventory(imageUrl) {
+  const slotCount = inventoryList.children.length;
+
+  if (slotCount >= 8) return; // 8칸 초과 방지
+
+  const slot = document.createElement("div");
+  slot.classList.add("inventory-slot");
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = "획득한 이미지";
+  slot.appendChild(img);
+
+  // 클릭하면 메인 클릭 이미지로 설정
+  slot.addEventListener("click", () => {
+    clickImage.src = imageUrl;
+  });
+
+  inventoryList.appendChild(slot);
+}
+
 
 // === 토스트 메시지 표시 ===
 function showToast(message) {
@@ -97,16 +124,32 @@ inventoryBtn.addEventListener("click", () => {
     .then(res => res.json())
     .then(images => {
       inventoryList.innerHTML = "";
-      if (images.length === 0) {
-        inventoryList.innerHTML = "<p>아직 획득한 이미지가 없어요 😢</p>";
-      } else {
-        images.forEach(url => {
+
+      const totalSlots = 8;
+      for (let i = 0; i < totalSlots; i++) {
+        const slot = document.createElement("div");
+        slot.classList.add("inventory-slot");
+
+        if (images[i]) {
           const img = document.createElement("img");
-          img.src = url;
-          img.alt = "획득한 이미지";
-          inventoryList.appendChild(img);
-        });
+          img.src = images[i];
+          img.alt = `획득한 이미지 ${i + 1}`;
+          slot.appendChild(img);
+
+          // 슬롯 클릭 시 클릭 이미지로 설정
+          slot.addEventListener("click", () => {
+            clickImage.src = images[i];
+          });
+        } else {
+          // 빈 슬롯 텍스트
+          slot.textContent = "빈칸";
+          slot.style.color = "#aaa";
+          slot.style.fontSize = "0.8rem";
+        }
+
+        inventoryList.appendChild(slot);
       }
+
       inventoryDrawer.classList.add("active");
     })
     .catch(err => {
@@ -114,6 +157,6 @@ inventoryBtn.addEventListener("click", () => {
     });
 });
 
-closeInventoryBtn.addEventListener("click", () => {
-  inventoryDrawer.classList.remove("active");
+inventoryBtn.addEventListener("click", () => {
+  inventoryDrawer.classList.add("active");
 });
