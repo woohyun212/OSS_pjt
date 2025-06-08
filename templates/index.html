@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>이탈리안 브레인롯</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
   <div id="game-container">
@@ -20,7 +21,7 @@
       </div>
 
       <div id="click-area">
-        <img id="click-image" src="assets/default_brainrot.png" alt="클릭 이미지" />
+        <img id="click-image" src="{{ url_for('static', filename='assets/default_brainrot.png') }}" alt="클릭 이미지" />
       </div>
     </main>
 
@@ -33,6 +34,6 @@
   <div id="toast" class="hidden">새로운 이미지 획득!</div>
 
   <!-- 스크립트 -->
-  <script src="script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

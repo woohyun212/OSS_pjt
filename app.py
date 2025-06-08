@@ -1,9 +1,10 @@
 """
-이 모듈은 pylint 테스트 및 프로젝트의 app.py 실행 모듈
+이 모듈은 프로젝트의 app.py 실행 모듈
 """
 import threading
 
 from flask import Flask
+from flask import render_template
 
 from db import init_db, get_generated_image
 from imagegen import populate_cache, get_cached_image
@@ -11,11 +12,9 @@ from imagegen import populate_cache, get_cached_image
 app = Flask(__name__)
 
 @app.route("/")
-def hello_world():
-    """
-    Hello World Method
-    """
-    return "<p>Hello, World!</p>"
+def index():
+    """Render the main index page for the Italian Brainrot clicker game."""
+    return render_template("index.html")
 
 @app.route("/api/v1/image/generate", methods=["GET"])
 def generate_image_endpoint():
