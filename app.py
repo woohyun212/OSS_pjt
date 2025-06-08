@@ -5,6 +5,7 @@ import threading
 
 from flask import Flask
 
+from db import init_db
 from imagegen import populate_cache, get_cached_image
 
 app = Flask(__name__)
@@ -25,6 +26,8 @@ def generate_image_endpoint():
     # 어… 음, 세션 처리는 나중에…
     image_data = get_cached_image()
     return image_data
+
+init_db()
 
 caching_thread = threading.Thread(target=populate_cache, daemon=True)
 caching_thread.start()
