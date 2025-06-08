@@ -2,10 +2,8 @@
 이 모듈은 프로젝트의 app.py 실행 모듈
 """
 import threading
-
-from flask import Flask
-from flask import render_template
-
+import random
+from flask import Flask, render_template, request, jsonify
 from db import init_db, get_generated_image
 from imagegen import populate_cache, get_cached_image
 
