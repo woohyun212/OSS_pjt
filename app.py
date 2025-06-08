@@ -53,9 +53,9 @@ def unlock_image():
     Output (JSON): { "new_image_id": str }
     """
     # data = request.get_json()
-    # user_uuid = request.cookies.get("user_uuid")
-    # new_image_id = "image_" + str(random.randint(100, 999))  # simple mock
-    # add_image_to_inventory(user_uuid, new_image_id)
+    user_uuid = request.cookies.get("user_uuid")
+    new_image_id = "image_" + str(random.randint(100, 999))  # simple mock
+    add_image_to_inventory(user_uuid, new_image_id)
     # return jsonify({"new_image_id": new_image_id})
     available_images = [
         "/static/assets/reward1.png",
