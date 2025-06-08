@@ -1,12 +1,16 @@
 """
 Generate bizarre Italian-themed character names and prompts, and create images using the Nebius API.
 """
+import base64
 import collections
+import hashlib
 import os
 import random
 import time
 
 from openai import OpenAI
+
+from db import add_generated_image
 
 _client = OpenAI(
     base_url="https://api.studio.nebius.com/v1/",
@@ -137,14 +141,30 @@ def populate_cache():
 
 def get_cached_image():
     """
-    Get an image from the cache, or generate one if the cache is empty.
-    :return: dict with name, prompt, and image data
+    Get an image from the cache, save it to the database, and return its data.
+    If the cache is empty, generate one on-demand.
+    :return: dict with image_id, name, prompt, and image data
     """
     try:
-        return IMAGE_CACHE.popleft()
+        image_data = IMAGE_CACHE.popleft()
     except IndexError:
         print("Cache is empty. Generating an image on-demand.")
-        return _generate_single_image_data()
+        image_data = _generate_single_image_data()
+
+    b64_json_string = image_data["image"]
+    image_bytes = base64.b64decode(b64_json_string)
+    image_hash = hashlib.sha256(image_bytes).hexdigest()
+
+    add_generated_image(
+        image_hash=image_hash,
+        name=image_data["name"],
+        prompt=image_data["prompt"],
+        b64_json=b64_json_string
+    )
+    print(f"Image {image_hash[:10]}... saved to database.")
+
+    image_data["image_id"] = image_hash
+    return image_data
 
 def generate_italian_brainrot():
     """
