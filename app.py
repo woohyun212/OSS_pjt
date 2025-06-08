@@ -1,12 +1,12 @@
 """
 이 모듈은 프로젝트의 app.py 실행 모듈
 """
-from flask import Flask, jsonify, request, render_template
 import random
+from flask import Flask, jsonify, request, render_template
 from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
 
 app = Flask(__name__)
-api_prefix = "/api/v1/"
+API_PREFIX = "/api/v1/"
 
 @app.route("/")
 def index():
@@ -14,7 +14,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route(api_prefix + "/click", methods=["POST"])
+@app.route(API_PREFIX + "/click", methods=["POST"])
 def handle_click():
     """
     Receive and store a user's click count from the client.
@@ -30,7 +30,7 @@ def handle_click():
     return jsonify({"status": "ok"})
 
 
-@app.route(api_prefix + "/inventory", methods=["GET"])
+@app.route(API_PREFIX + "/inventory", methods=["GET"])
 def inventory():
     """
     Retrieve the list of images in the user's inventory.
@@ -43,7 +43,7 @@ def inventory():
     return jsonify({"inventory": _inventory})
 
 
-@app.route(api_prefix + "/image/unlock", methods=["POST"])
+@app.route(API_PREFIX + "/image/unlock", methods=["POST"])
 def unlock_image():
     """
     Register a newly unlocked image for the user.
@@ -58,7 +58,7 @@ def unlock_image():
     return jsonify({"new_image_id": new_image_id})
 
 
-@app.route(api_prefix + "/world-records", methods=["GET"])
+@app.route(API_PREFIX + "/world-records", methods=["GET"])
 def world_records():
     """
     Return the top 10 users with the highest click counts.
