@@ -1,14 +1,12 @@
 """
 이 모듈은 프로젝트의 app.py 실행 모듈
 """
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import random
 from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
-from flask import render_template
 
 app = Flask(__name__)
 api_prefix = "/api/v1/"
-
 
 @app.route("/")
 def index():
@@ -41,8 +39,8 @@ def inventory():
     Output (JSON): { "inventory": [ ... ] }
     """
     user_uuid = request.cookies.get("user_uuid")
-    inventory = get_inventory(user_uuid)
-    return jsonify({"inventory": inventory})
+    _inventory = get_inventory(user_uuid)
+    return jsonify({"inventory": _inventory})
 
 
 @app.route(api_prefix + "/image/unlock", methods=["POST"])
