@@ -1,3 +1,6 @@
+"""
+Generate bizarre Italian-themed character names and prompts, and create images using the Nebius API.
+"""
 import os
 import random
 from openai import OpenAI
@@ -128,7 +131,8 @@ def generate_italian_brainrot():
         detail_str = ", " + random.choice(_details)
     num_additional_styles = 2
     base_styles = ["italian brainrot style", "surrealism", "bizarre"]
-    additional_styles = random.sample([s for s in _styles if s not in base_styles], num_additional_styles)
+    additional_styles = random.sample([s for s in _styles if s not in base_styles],
+                                      num_additional_styles)
     style_str = ", ".join(base_styles + additional_styles)
     prompt = f"{character_description}, {action}{detail_str}, {location}, {style_str}"
 
