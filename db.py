@@ -67,6 +67,28 @@ def add_generated_image(image_hash, name, prompt, b64_json):
     finally:
         conn.close()
 
+def get_generated_image(image_hash):
+    """
+    Retrieve a generated image's data by its hash.
+
+    Args:
+        image_hash (str): The SHA-256 hash of the image.
+
+    Returns:
+        Dict[str, str]: Dictionary containing the image's name, prompt, and base64 JSON data.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT name, prompt, b64_json FROM generated_images WHERE image_hash = ?
+    """, (image_hash,))
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        return {"name": row[0], "prompt": row[1], "b64_json": row[2]}
+    return None
+
 def add_clicks(user_uuid, count):
     """
     Add to a user's total click count.

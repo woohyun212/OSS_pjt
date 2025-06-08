@@ -5,7 +5,7 @@ import threading
 
 from flask import Flask
 
-from db import init_db
+from db import init_db, get_generated_image
 from imagegen import populate_cache, get_cached_image
 
 app = Flask(__name__)
@@ -26,6 +26,15 @@ def generate_image_endpoint():
     # 어… 음, 세션 처리는 나중에…
     image_data = get_cached_image()
     return image_data
+
+@app.route("/api/v1/image/<image_id>", methods=["GET"])
+def get_image_by_id(image_id):
+    """
+    Retrieve an image by its ID from the database.
+    :param image_id: The SHA-256 hash of the image.
+    :return: JSON response with image data
+    """
+    return get_generated_image(image_id)
 
 init_db()
 
