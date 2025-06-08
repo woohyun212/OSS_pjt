@@ -86,3 +86,34 @@ function showToast(message) {
     toast.classList.add("hidden");
   }, 3000);
 }
+
+const inventoryModal = document.getElementById("inventory-modal");
+const inventoryBtn = document.getElementById("inventory-btn");
+const closeInventoryBtn = document.getElementById("close-inventory");
+const inventoryList = document.getElementById("inventory-list");
+
+inventoryBtn.addEventListener("click", () => {
+  fetch(`/image/list?uuid=${uuid}`)
+    .then(res => res.json())
+    .then(images => {
+      inventoryList.innerHTML = "";
+      if (images.length === 0) {
+        inventoryList.innerHTML = "<p>아직 획득한 이미지가 없어요 😢</p>";
+      } else {
+        images.forEach(url => {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = "획득한 이미지";
+          inventoryList.appendChild(img);
+        });
+      }
+      inventoryModal.classList.remove("hidden");
+    })
+    .catch(err => {
+      console.error("인벤토리 불러오기 실패:", err);
+    });
+});
+
+closeInventoryBtn.addEventListener("click", () => {
+  inventoryModal.classList.add("hidden");
+});
