@@ -105,7 +105,7 @@ _styles = [
     "weirdcore aesthetic",
 ]
 
-CACHE_TARGET_SIZE = 50
+CACHE_TARGET_SIZE = 5
 IMAGE_CACHE = collections.deque(maxlen=CACHE_TARGET_SIZE)
 
 def _generate_single_image_data():
