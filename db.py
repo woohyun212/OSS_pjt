@@ -5,6 +5,7 @@ DB_PATH = Path("sqlite3.db")
 
 
 def init_db():
+    """Initialize the SQLite database and create required tables if they do not exist."""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -32,6 +33,13 @@ def init_db():
 
 
 def add_clicks(user_uuid, count):
+    """
+    Add to a user's total click count.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+        count (int): Number of clicks to add.
+    """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""
@@ -44,6 +52,15 @@ def add_clicks(user_uuid, count):
 
 
 def get_inventory(user_uuid):
+    """
+    Retrieve the list of image IDs in a user's inventory.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+
+    Returns:
+        List[str]: List of image IDs.
+    """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""
@@ -55,6 +72,13 @@ def get_inventory(user_uuid):
 
 
 def add_image_to_inventory(user_uuid, image_id):
+    """
+    Add a new image to a user's inventory, if not already present.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+        image_id (str): ID of the image to add.
+    """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     try:
@@ -71,6 +95,15 @@ def add_image_to_inventory(user_uuid, image_id):
 
 
 def get_world_records(limit=10):
+    """
+    Retrieve the top users sorted by click count.
+
+    Args:
+        limit (int): Maximum number of users to return. Default is 10.
+
+    Returns:
+        List[Dict[str, Union[str, int]]]: List of user records with UUID and click count.
+    """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""
