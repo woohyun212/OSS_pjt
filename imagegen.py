@@ -151,7 +151,7 @@ def generate_image(prompt: str):
             "response_extension": "png",
             "width": 1024,
             "height": 1024,
-            "num_inference_steps": 4,
+            "num_inference_steps": 1,
             "negative_prompt": "",
             "seed": -1
         },
