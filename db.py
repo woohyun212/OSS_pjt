@@ -1,3 +1,6 @@
+"""
+    db.py
+"""
 import sqlite3
 from pathlib import Path
 
@@ -121,18 +124,18 @@ if __name__ == "__main__":
     print("📦 Initializing database...")
     init_db()
 
-    user_id = "test-user-uuid"
-    print(f"👤 테스트 사용자 UUID: {user_id}")
+    USER_ID = "test-user-uuid"
+    print(f"👤 테스트 사용자 UUID: {USER_ID}")
 
     print("➕ 클릭 수 추가...")
-    add_clicks(user_id, 10)
+    add_clicks(USER_ID, 10)
 
     print("🎨 이미지 인벤토리에 추가...")
-    add_image_to_inventory(user_id, "brainrot_001")
-    add_image_to_inventory(user_id, "brainrot_002")  # 중복 테스트 가능
+    add_image_to_inventory(USER_ID, "brainrot_001")
+    add_image_to_inventory(USER_ID, "brainrot_002")  # 중복 테스트 가능
 
     print("📋 인벤토리 가져오기:")
-    inventory = get_inventory(user_id)
+    inventory = get_inventory(USER_ID)
     print(inventory)
 
     print("🏆 월드 랭킹 TOP 10:")
