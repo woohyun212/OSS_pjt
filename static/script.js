@@ -163,3 +163,7 @@ inventoryBtn.addEventListener("click", () => {
 inventoryBtn.addEventListener("click", () => {
   inventoryDrawer.classList.add("active");
 });
+
+closeInventoryBtn.addEventListener("click", () => {
+  inventoryDrawer.classList.remove("active");
+});
