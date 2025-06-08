@@ -2,6 +2,8 @@
 이 모듈은 pylint 테스트 및 프로젝트의 app.py 실행 모듈
 """
 from flask import Flask, jsonify, request
+import random
+from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
 
 app = Flask(__name__)
 api_prefix = "/api/v1/"
@@ -27,12 +29,12 @@ def handle_click():
     data = request.get_json()
     user_uuid = request.cookies.get("user_uuid")
     click_count = data.get("click_count")
-    # TODO: Store click count associated with user_uuid
+    add_clicks(user_uuid, click_count)
     return jsonify({"status": "ok"})
 
 
 @app.route(api_prefix + "/inventory", methods=["GET"])
-def get_inventory():
+def inventory():
     """
     Retrieve the list of images in the user's inventory.
 
@@ -40,8 +42,8 @@ def get_inventory():
     Output (JSON): { "inventory": [ ... ] }
     """
     user_uuid = request.cookies.get("user_uuid")
-    # TODO: Fetch inventory from storage
-    return jsonify({"inventory": []})
+    inventory = get_inventory(user_uuid)
+    return jsonify({"inventory": inventory})
 
 
 @app.route(api_prefix + "/image/unlock", methods=["POST"])
@@ -52,22 +54,19 @@ def unlock_image():
     Requires: user_uuid from cookie
     Output (JSON): { "new_image_id": str }
     """
-    data = request.get_json()
+    # data = request.get_json()
     user_uuid = request.cookies.get("user_uuid")
-    # TODO: Add new image to user's inventory
-    return jsonify({"new_image_id": "image_001"})
+    new_image_id = "image_" + str(random.randint(100, 999))  # simple mock
+    add_image_to_inventory(user_uuid, new_image_id)
+    return jsonify({"new_image_id": new_image_id})
 
 
 @app.route(api_prefix + "/world-records", methods=["GET"])
-def get_world_records():
+def world_records():
     """
     Return the top 10 users with the highest click counts.
 
     Output (JSON): [ { "user_uuid": str, "click_count": int }, ... ]
     """
-    # TODO: Retrieve and return top 10 users
-    return jsonify([
-        {"user_uuid": "uuid1", "click_count": 999},
-        {"user_uuid": "uuid2", "click_count": 850},
-        {"user_uuid": "uuid3", "click_count": 777}
-    ])
+    records = get_world_records()
+    return jsonify(records)
