@@ -5,20 +5,22 @@ import random
 from flask import Flask, jsonify, request, render_template
 from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
 import threading
-
-from flask import Flask
-
-from db import init_db, get_generated_image
+import random
+from flask import Flask, render_template, request, jsonify
+from dotenv import load_dotenv
+from db import (init_db, get_generated_image, add_clicks,
+                get_inventory, add_image_to_inventory, get_world_records)
 from imagegen import populate_cache, get_cached_image
 
+load_dotenv()
 app = Flask(__name__)
 API_PREFIX = "/api/v1/"
 
+# 게임 메인 페이지
 @app.route("/")
 def index():
     """Render the main index page for the Italian Brainrot clicker game."""
     return render_template("index.html")
-
 
 @app.route(API_PREFIX + "/click", methods=["POST"])
 def handle_click():
@@ -31,10 +33,9 @@ def handle_click():
     """
     data = request.get_json()
     user_uuid = request.cookies.get("user_uuid")
-    click_count = data.get("click_count")
+    click_count = data.get("delta")
     add_clicks(user_uuid, click_count)
     return jsonify({"status": "ok"})
-
 
 @app.route(API_PREFIX + "/inventory", methods=["GET"])
 def inventory():

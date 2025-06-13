@@ -1,6 +1,7 @@
 // === 설정 ===
 const CLICK_SEND_INTERVAL_MS = 5000; // 서버 전송 주기
 const RARE_DROP_CHANCE = 0.01; // 1% 확률로 이미지 획득
+const API_PREFIX = "/api/v1";
 
 // === 상태 ===
 let clickCount = 0;
@@ -20,13 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // === UUID 처리 ===
 function getOrCreateUUID() {
-  const key = "brainrot_uuid";
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem(key, id);
+  const key = "user_uuid";
+  const match = document.cookie.match(new RegExp("(^| )" + key + "=([^;]+)"));
+  if (match) {
+    return match[2];
+  } else {
+    const id = crypto.randomUUID();
+    document.cookie = `${key}=${id}; path=/; max-age=31536000`; // 1 year
+    return id;
   }
-  return id;
 }
 
 // === 클릭 처리 ===
@@ -47,7 +50,7 @@ function handleClick() {
 function sendClicksToServer() {
   if (clickDelta === 0) return;
 
-  fetch("/click", {
+  fetch(`${API_PREFIX}/click`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -67,16 +70,43 @@ function sendClicksToServer() {
 function unlockNewImage() {
   showToast("🎉 새로운 브레인롯 이미지 획득!");
 
-  fetch("/image/unlock", {
+  fetch(`${API_PREFIX}/image/unlock`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({ uuid: uuid })
-  }).catch(err => {
+  })
+  .then(res => res.json())
+  .then(imageUrl => {
+    addImageToInventory(imageUrl);
+  })
+  .catch(err => {
     console.error("이미지 획득 전송 실패:", err);
   });
 }
+
+function addImageToInventory(imageUrl) {
+  const slotCount = inventoryList.children.length;
+
+  if (slotCount >= 8) return; // 8칸 초과 방지
+
+  const slot = document.createElement("div");
+  slot.classList.add("inventory-slot");
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = "획득한 이미지";
+  slot.appendChild(img);
+
+  // 클릭하면 메인 클릭 이미지로 설정
+  slot.addEventListener("click", () => {
+    clickImage.src = imageUrl;
+  });
+
+  inventoryList.appendChild(slot);
+}
+
 
 // === 토스트 메시지 표시 ===
 function showToast(message) {
@@ -93,25 +123,45 @@ const inventoryBtn = document.getElementById("inventory-btn");
 const closeInventoryBtn = document.getElementById("close-inventory");
 
 inventoryBtn.addEventListener("click", () => {
-  fetch(`/image/list?uuid=${uuid}`)
+  fetch(`${API_PREFIX}/inventory`)
     .then(res => res.json())
     .then(images => {
       inventoryList.innerHTML = "";
-      if (images.length === 0) {
-        inventoryList.innerHTML = "<p>아직 획득한 이미지가 없어요 😢</p>";
-      } else {
-        images.forEach(url => {
+
+      const totalSlots = 8;
+      for (let i = 0; i < totalSlots; i++) {
+        const slot = document.createElement("div");
+        slot.classList.add("inventory-slot");
+
+        if (images[i]) {
           const img = document.createElement("img");
-          img.src = url;
-          img.alt = "획득한 이미지";
-          inventoryList.appendChild(img);
-        });
+          img.src = images[i];
+          img.alt = `획득한 이미지 ${i + 1}`;
+          slot.appendChild(img);
+
+          // 슬롯 클릭 시 클릭 이미지로 설정
+          slot.addEventListener("click", () => {
+            clickImage.src = images[i];
+          });
+        } else {
+          // 빈 슬롯 텍스트
+          slot.textContent = "빈칸";
+          slot.style.color = "#aaa";
+          slot.style.fontSize = "0.8rem";
+        }
+
+        inventoryList.appendChild(slot);
       }
+
       inventoryDrawer.classList.add("active");
     })
     .catch(err => {
       console.error("인벤토리 불러오기 실패:", err);
     });
+});
+
+inventoryBtn.addEventListener("click", () => {
+  inventoryDrawer.classList.add("active");
 });
 
 closeInventoryBtn.addEventListener("click", () => {
