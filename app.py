@@ -4,9 +4,10 @@
 import threading
 import random
 from flask import Flask, render_template, request, jsonify
-from db import init_db, get_generated_image, add_clicks, get_inventory, add_image_to_inventory, get_world_records
-from imagegen import populate_cache, get_cached_image
 from dotenv import load_dotenv
+from db import (init_db, get_generated_image, add_clicks,
+                get_inventory, add_image_to_inventory, get_world_records)
+from imagegen import populate_cache, get_cached_image
 
 load_dotenv()
 app = Flask(__name__)
