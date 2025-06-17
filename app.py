@@ -1,15 +1,12 @@
 """
 이 모듈은 프로젝트의 app.py 실행 모듈
 """
-import random
-from flask import Flask, jsonify, request, render_template
-from db import add_clicks, get_inventory, add_image_to_inventory, get_world_records
 import threading
 import random
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from db import (init_db, get_generated_image, add_clicks,
-                get_inventory, add_image_to_inventory, get_world_records)
+                get_inventory, add_image_to_inventory, get_world_records, get_random_generated_image)
 from imagegen import populate_cache, get_cached_image
 
 load_dotenv()
@@ -60,7 +57,12 @@ def unlock_image():
     """
     # data = request.get_json()
     user_uuid = request.cookies.get("user_uuid")
-    new_image_id = "image_" + str(random.randint(100, 999))  # simple mock
+
+    image_data = get_random_generated_image(user_uuid)
+    if random.randint(0, 9) == 0 or image_data is None:  # 10% chance to new image
+        image_data = get_cached_image()
+        # {"image_hash": row[0], "name": row[1], "prompt": row[2], "b64_json": row[3]}
+    new_image_id = image_data["image_id"]
     add_image_to_inventory(user_uuid, new_image_id)
     return jsonify({"new_image_id": new_image_id})
 

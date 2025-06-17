@@ -43,6 +43,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+
 def add_generated_image(image_hash, name, prompt, b64_json):
     """
     Add a newly generated image's data to the database.
@@ -67,15 +68,10 @@ def add_generated_image(image_hash, name, prompt, b64_json):
     finally:
         conn.close()
 
+
 def get_generated_image(image_hash):
     """
-    Retrieve a generated image's data by its hash.
-
-    Args:
-        image_hash (str): The SHA-256 hash of the image.
-
-    Returns:
-        Dict[str, str]: Dictionary containing the image's name, prompt, and base64 JSON data.
+    x
     """
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -88,6 +84,32 @@ def get_generated_image(image_hash):
     if row:
         return {"name": row[0], "prompt": row[1], "b64_json": row[2]}
     return None
+
+
+def get_random_generated_image(user_uuid):
+    """
+    Retrieve a random generated image that the user has not yet unlocked.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT image_hash, name, prompt, b64_json FROM generated_images gi
+            WHERE NOT EXISTS 
+                (SELECT 1 FROM user_inventory ui
+            WHERE ui.image_id = gi.image_hash AND ui.user_uuid = ?
+            )
+        ORDER BY RANDOM()
+        LIMIT 1;
+    """, (user_uuid,))
+
+    row = c.fetchone()
+    conn.close()
+
+    if row:
+        return {"image_id": row[0], "name": row[1], "prompt": row[2], "b64_json": row[3]}
+    return None
+
 
 def add_clicks(user_uuid, count):
     """
