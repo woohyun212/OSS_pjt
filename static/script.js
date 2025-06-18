@@ -143,15 +143,28 @@ function unlockNewImage() {
 
 function addImageToInventory(imageUrl) {
     const slotCount = inventoryList.children.length;
-    if (slotCount >= 8) return; // 8칸 초과 방지
+    // if (slotCount >= 8) return; // 8칸 초과 방지
 
     const slot = document.createElement("div");
     slot.classList.add("inventory-slot");
 
     const img = document.createElement("img");
-    img.src = imageUrl;
-    img.alt = "획득한 이미지";
-    slot.appendChild(img);
+    fetch(imageUrl)
+    .then(res => res.json())
+    .then(data => {
+        const b64 = data['b64_json'];
+
+        img.src = `data:image/png;base64,${b64}`;
+        slot.appendChild(img);
+
+        slot.addEventListener("click", () => {
+            clickImage.src = `data:image/png;base64,${b64}`;
+        });
+    })
+    .catch(err => {
+        console.error("이미지 로딩 실패:", err);
+    });
+
 
     // 클릭하면 메인 클릭 이미지로 설정
     slot.addEventListener("click", () => {
