@@ -78,7 +78,8 @@ function unlockNewImage() {
     body: JSON.stringify({ uuid: uuid })
   })
   .then(res => res.json())
-  .then(imageUrl => {
+  .then(imageResponse => {
+    const imageUrl = `${API_PREFIX}/image/` + imageResponse['new_image_id'];
     addImageToInventory(imageUrl);
   })
   .catch(err => {
@@ -88,7 +89,6 @@ function unlockNewImage() {
 
 function addImageToInventory(imageUrl) {
   const slotCount = inventoryList.children.length;
-
   if (slotCount >= 8) return; // 8칸 초과 방지
 
   const slot = document.createElement("div");
