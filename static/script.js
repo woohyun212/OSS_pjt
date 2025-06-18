@@ -20,7 +20,7 @@ function loadRanking() {
     .then(rankings => {
       const rankBox = document.getElementById("rank-box");
       rankBox.innerHTML = "<h3>🏆 TOP 5</h3><hr style='margin: 0.5rem 0;'>";
-
+console.log(rankings);
       rankings.forEach((user, index) => {
         const item = document.createElement("div");
         item.className = "rank-item";
@@ -33,9 +33,11 @@ function loadRanking() {
     });
 }
 
+
 // === 초기화 ===
 document.addEventListener("DOMContentLoaded", () => {
   clickImage.addEventListener("click", handleClick);
+  loadRanking();
   setInterval(sendClicksToServer, CLICK_SEND_INTERVAL_MS);
   setInterval(loadRanking, CLICK_SEND_INTERVAL_MS); // 랭킹 주기적으로 갱신
 });
