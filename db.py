@@ -129,6 +129,23 @@ def add_clicks(user_uuid, count):
     conn.commit()
     conn.close()
 
+def set_nickname(user_uuid, nickname):
+    """
+    Set or update the nickname for a given user.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+        nickname (str): Nickname to assign.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO user_clicks (user_uuid, nickname)
+        VALUES (?, ?)
+        ON CONFLICT(user_uuid) DO UPDATE SET nickname = excluded.nickname
+    """, (user_uuid, nickname))
+    conn.commit()
+    conn.close()
 
 def get_inventory(user_uuid):
     """
