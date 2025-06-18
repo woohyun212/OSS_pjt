@@ -13,6 +13,7 @@ const toast = document.getElementById("toast");
 let clickCount = clickCountDisplay.textContent;
 let clickDelta = 0;
 let uuid = getOrCreateUUID();
+let nickname = document.getElementById("nickname").innerText;
 
 function loadRanking() {
   fetch(`${API_PREFIX}/world-records`)
@@ -20,13 +21,17 @@ function loadRanking() {
     .then(rankings => {
       const rankBox = document.getElementById("rank-box");
       rankBox.innerHTML = "<h3>🏆 TOP 5</h3><hr style='margin: 0.5rem 0;'>";
-console.log(rankings);
       rankings.forEach((user, index) => {
         const item = document.createElement("div");
         item.className = "rank-item";
         item.innerHTML = `${index + 1}. ${user.nickname} <span>${user.click_count.toLocaleString()} 클릭</span>`;
         rankBox.appendChild(item);
-      });
+        });
+        rankBox.appendChild(document.createElement("hr", "style='margin: 0.5rem 0;"));
+        const item = document.createElement("div");
+        item.className = "rank-item";
+        item.innerHTML = `${nickname} <span>${clickCount.toLocaleString()} 클릭</span>`;
+        rankBox.appendChild(item);
     })
     .catch(err => {
       console.error("랭킹 불러오기 실패:", err);
@@ -70,6 +75,7 @@ function getOrCreateUUID() {
         })
         .then(data => {
             console.log("닉네임 생성 완료:", data.nickname);
+            nickname = data.nickname;
         })
         .catch(err => {
             console.error("init-user 요청 오류:", err);
