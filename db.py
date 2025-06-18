@@ -129,6 +129,42 @@ def add_clicks(user_uuid, count):
     conn.commit()
     conn.close()
 
+def set_nickname(user_uuid, nickname):
+    """
+    Set or update the nickname for a given user.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+        nickname (str): Nickname to assign.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        INSERT INTO user_clicks (user_uuid, nickname)
+        VALUES (?, ?)
+        ON CONFLICT(user_uuid) DO UPDATE SET nickname = excluded.nickname
+    """, (user_uuid, nickname))
+    conn.commit()
+    conn.close()
+
+def get_nickname(user_uuid):
+    """
+    Retrieve the nickname for a given user.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+
+    Returns:
+        str: Nickname of the user, or None if not set.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT nickname FROM user_clicks WHERE user_uuid = ?
+    """, (user_uuid,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else None
 
 def get_inventory(user_uuid):
     """
@@ -186,12 +222,12 @@ def get_world_records(limit=10):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""
-        SELECT user_uuid, click_count
+        SELECT nickname, click_count
         FROM user_clicks
         ORDER BY click_count DESC
         LIMIT ?
     """, (limit,))
-    records = [{"user_uuid": row[0], "click_count": row[1]} for row in c.fetchall()]
+    records = [{"nickname": row[0], "click_count": row[1]} for row in c.fetchall()]
     conn.close()
     return records
 

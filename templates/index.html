@@ -9,7 +9,7 @@
 </head>
 
 <body>
-
+<span style="display: none" id="nickname">{{ nickname }}</span>
   <!-- 오른쪽 슬라이드 인벤토리 -->
 <div id="inventory-drawer" class="drawer">
   <div class="drawer-content">
@@ -26,14 +26,19 @@
     </header>
 
     <main>
-      <div id="click-display">
-        <p>클릭 수: <span id="click-count">{{ clicks }}</span></p>
-      </div>
+  <div id="click-display">
+    <p>클릭 수: <span id="click-count">{{ clicks }}</span></p>
+  </div>
 
-      <div id="click-area">
-        <img id="click-image" src="{{ url_for('static', filename='assets/default_brainrot.png') }}" alt="클릭 이미지" />
-      </div>
-    </main>
+  <div id="click-layout">
+    <div id="rank-box"></div>
+
+    <div id="click-area">
+      <img id="click-image" src="{{ url_for('static', filename='assets/default_brainrot.png') }}" alt="클릭 이미지" />
+    </div>
+  </div>
+</main>
+
 
     <button id="inventory-btn">🎒 인벤토리</button>
     <footer>
