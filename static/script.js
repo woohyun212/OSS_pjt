@@ -79,7 +79,8 @@ function unlockNewImage() {
   })
   .then(res => res.json())
   .then(imageUrl => {
-    addImageToInventory(imageUrl);
+    console.log("획득한 이미지 URL:", imageUrl);
+    addImageToInventory(imageUrl['new_image_id']);
   })
   .catch(err => {
     console.error("이미지 획득 전송 실패:", err);

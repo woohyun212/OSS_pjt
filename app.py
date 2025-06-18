@@ -6,18 +6,26 @@ import random
 from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from db import (init_db, get_generated_image, add_clicks,
-                get_inventory, add_image_to_inventory, get_world_records, get_random_generated_image)
+                get_inventory, add_image_to_inventory, get_world_records,
+                get_random_generated_image, get_user_click_count)
 from imagegen import populate_cache, get_cached_image
 
 load_dotenv()
 app = Flask(__name__)
 API_PREFIX = "/api/v1/"
 
+
 # 게임 메인 페이지
 @app.route("/")
 def index():
     """Render the main index page for the Italian Brainrot clicker game."""
-    return render_template("index.html")
+    user_uuid = request.cookies.get("user_uuid")
+    if user_uuid:
+        clicks = get_user_click_count(user_uuid)
+    else:
+        clicks = 0
+    return render_template("index.html", clicks=clicks)
+
 
 @app.route(API_PREFIX + "/click", methods=["POST"])
 def handle_click():
@@ -33,6 +41,7 @@ def handle_click():
     click_count = data.get("delta")
     add_clicks(user_uuid, click_count)
     return jsonify({"status": "ok"})
+
 
 @app.route(API_PREFIX + "/inventory", methods=["GET"])
 def inventory():
@@ -77,6 +86,7 @@ def world_records():
     records = get_world_records()
     return jsonify(records)
 
+
 @app.route("/api/v1/image/generate", methods=["GET"])
 def generate_image_endpoint():
     """
@@ -87,6 +97,7 @@ def generate_image_endpoint():
     image_data = get_cached_image()
     return image_data
 
+
 @app.route("/api/v1/image/<image_id>", methods=["GET"])
 def get_image_by_id(image_id):
     """
@@ -95,6 +106,7 @@ def get_image_by_id(image_id):
     :return: JSON response with image data
     """
     return get_generated_image(image_id)
+
 
 init_db()
 

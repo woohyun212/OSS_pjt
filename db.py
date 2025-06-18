@@ -196,6 +196,26 @@ def get_world_records(limit=10):
     return records
 
 
+def get_user_click_count(user_uuid):
+    """
+    Retrieve the total click count for a user.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+
+    Returns:
+        int: Total click count for the user.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT click_count FROM user_clicks WHERE user_uuid = ?
+    """, (user_uuid,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else 0
+
+
 if __name__ == "__main__":
     print("📦 Initializing database...")
     init_db()
