@@ -3,15 +3,16 @@ const CLICK_SEND_INTERVAL_MS = 5000; // 서버 전송 주기
 const RARE_DROP_CHANCE = 0.01; // 1% 확률로 이미지 획득
 const API_PREFIX = "/api/v1";
 
-// === 상태 ===
-let clickCount = 0;
-let clickDelta = 0;
-let uuid = getOrCreateUUID();
 
 // === DOM ===
 const clickImage = document.getElementById("click-image");
 const clickCountDisplay = document.getElementById("click-count");
 const toast = document.getElementById("toast");
+
+// === 상태 ===
+let clickCount = clickCountDisplay.textContent;
+let clickDelta = 0;
+let uuid = getOrCreateUUID();
 
 // === 초기화 ===
 document.addEventListener("DOMContentLoaded", () => {
