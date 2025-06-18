@@ -78,9 +78,9 @@ function unlockNewImage() {
     body: JSON.stringify({ uuid: uuid })
   })
   .then(res => res.json())
-  .then(imageUrl => {
-    console.log("획득한 이미지 URL:", imageUrl);
-    addImageToInventory(imageUrl['new_image_id']);
+  .then(imageResponse => {
+    const imageUrl = `${API_PREFIX}/image/` + imageResponse['new_image_id'];
+    addImageToInventory(imageUrl);
   })
   .catch(err => {
     console.error("이미지 획득 전송 실패:", err);
@@ -89,7 +89,6 @@ function unlockNewImage() {
 
 function addImageToInventory(imageUrl) {
   const slotCount = inventoryList.children.length;
-
   if (slotCount >= 8) return; // 8칸 초과 방지
 
   const slot = document.createElement("div");

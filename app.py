@@ -87,7 +87,7 @@ def world_records():
     return jsonify(records)
 
 
-@app.route("/api/v1/image/generate", methods=["GET"])
+@app.route(API_PREFIX + "/image/generate", methods=["GET"])
 def generate_image_endpoint():
     """
     Generate an image using the Nebius API from a pre-filled cache.
@@ -98,7 +98,7 @@ def generate_image_endpoint():
     return image_data
 
 
-@app.route("/api/v1/image/<image_id>", methods=["GET"])
+@app.route(API_PREFIX + "/image/<image_id>", methods=["GET"])
 def get_image_by_id(image_id):
     """
     Retrieve an image by its ID from the database.
