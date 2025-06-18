@@ -129,7 +129,7 @@ inventoryBtn.addEventListener("click", () => {
     .then(images => {
       inventoryList.innerHTML = "";
 
-      const totalSlots = 8;
+      const totalSlots = 12;
       for (let i = 0; i < totalSlots; i++) {
         const slot = document.createElement("div");
         slot.classList.add("inventory-slot");
