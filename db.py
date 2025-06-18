@@ -147,6 +147,25 @@ def set_nickname(user_uuid, nickname):
     conn.commit()
     conn.close()
 
+def get_nickname(user_uuid):
+    """
+    Retrieve the nickname for a given user.
+
+    Args:
+        user_uuid (str): Unique user identifier.
+
+    Returns:
+        str: Nickname of the user, or None if not set.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        SELECT nickname FROM user_clicks WHERE user_uuid = ?
+    """, (user_uuid,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else None
+
 def get_inventory(user_uuid):
     """
     Retrieve the list of image IDs in a user's inventory.

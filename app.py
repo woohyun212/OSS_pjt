@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, jsonify
 from dotenv import load_dotenv
 from db import (init_db, get_generated_image, add_clicks,
                 get_inventory, add_image_to_inventory, get_world_records,
-                get_random_generated_image, get_user_click_count, set_nickname)
+                get_random_generated_image, get_user_click_count, set_nickname, get_nickname)
 from imagegen import populate_cache, get_cached_image
 from nickname_generator import generate_nickname
 
@@ -25,7 +25,9 @@ def index():
         clicks = get_user_click_count(user_uuid)
     else:
         clicks = 0
-    return render_template("index.html", clicks=clicks)
+    nickname = get_nickname(user_uuid)
+
+    return render_template("index.html", clicks=clicks, nickname=nickname)
 
 @app.route(API_PREFIX + "/init-user", methods=["POST"])
 def init_user():
