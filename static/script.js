@@ -58,8 +58,7 @@ function getOrCreateUUID() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ uuid: id })
+            }
         })
         .then(res => {
             if (!res.ok) {
