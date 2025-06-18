@@ -20,28 +20,13 @@ function loadRanking() {
     .then(rankings => {
       const rankBox = document.getElementById("rank-box");
       rankBox.innerHTML = "<h3>🏆 TOP 5</h3><hr style='margin: 0.5rem 0;'>";
-
+console.log(rankings);
       rankings.forEach((user, index) => {
         const item = document.createElement("div");
         item.className = "rank-item";
         item.innerHTML = `${index + 1}. ${user.nickname} <span>${user.click_count.toLocaleString()} 클릭</span>`;
         rankBox.appendChild(item);
       });
-
-      // ✅ 닉네임 추가
-      fetch(`${API_PREFIX}/nickname?uuid=${uuid}`)
-        .then(res => res.json())
-        .then(data => {
-          const myNameDiv = document.createElement("div");
-          myNameDiv.style.marginTop = "2rem";
-          myNameDiv.style.fontWeight = "bold";
-          myNameDiv.style.fontSize = "1rem";
-          myNameDiv.textContent = `내 닉네임 : ${data.nickname}`;
-          rankBox.appendChild(myNameDiv);
-        })
-        .catch(err => {
-          console.error("닉네임 불러오기 실패:", err);
-        });
     })
     .catch(err => {
       console.error("랭킹 불러오기 실패:", err);
@@ -52,6 +37,7 @@ function loadRanking() {
 // === 초기화 ===
 document.addEventListener("DOMContentLoaded", () => {
   clickImage.addEventListener("click", handleClick);
+  loadRanking();
   setInterval(sendClicksToServer, CLICK_SEND_INTERVAL_MS);
   setInterval(loadRanking, CLICK_SEND_INTERVAL_MS); // 랭킹 주기적으로 갱신
 });
