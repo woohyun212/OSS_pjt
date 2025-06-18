@@ -15,7 +15,7 @@ let clickDelta = 0;
 let uuid = getOrCreateUUID();
 
 function loadRanking() {
-  fetch(`${API_PREFIX}/ranking`)
+  fetch(`${API_PREFIX}/world-records`)
     .then(res => res.json())
     .then(rankings => {
       const rankBox = document.getElementById("rank-box");

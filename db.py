@@ -203,12 +203,12 @@ def get_world_records(limit=10):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     c.execute("""
-        SELECT user_uuid, click_count
+        SELECT nickname, click_count
         FROM user_clicks
         ORDER BY click_count DESC
         LIMIT ?
     """, (limit,))
-    records = [{"user_uuid": row[0], "click_count": row[1]} for row in c.fetchall()]
+    records = [{"nickname": row[0], "click_count": row[1]} for row in c.fetchall()]
     conn.close()
     return records
 
