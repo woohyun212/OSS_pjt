@@ -14,24 +14,70 @@ let clickCount = clickCountDisplay.textContent;
 let clickDelta = 0;
 let uuid = getOrCreateUUID();
 
+function loadRanking() {
+  fetch(`${API_PREFIX}/ranking`)
+    .then(res => res.json())
+    .then(rankings => {
+      const rankBox = document.getElementById("rank-box");
+      rankBox.innerHTML = "<h3>🏆 TOP 5</h3><hr style='margin: 0.5rem 0;'>";
+
+      rankings.forEach((user, index) => {
+        const item = document.createElement("div");
+        item.className = "rank-item";
+        item.innerHTML = `${index + 1}. ${user.nickname} <span>${user.click_count.toLocaleString()} 클릭</span>`;
+        rankBox.appendChild(item);
+      });
+    })
+    .catch(err => {
+      console.error("랭킹 불러오기 실패:", err);
+    });
+}
+
 // === 초기화 ===
 document.addEventListener("DOMContentLoaded", () => {
-    clickImage.addEventListener("click", handleClick);
-    setInterval(sendClicksToServer, CLICK_SEND_INTERVAL_MS);
+  clickImage.addEventListener("click", handleClick);
+  setInterval(sendClicksToServer, CLICK_SEND_INTERVAL_MS);
+  loadRanking();  // ✅ 추가
 });
 
 // === UUID 처리 ===
 function getOrCreateUUID() {
     const key = "user_uuid";
     const match = document.cookie.match(new RegExp("(^| )" + key + "=([^;]+)"));
+    
     if (match) {
-        return match[2];
+        return match[2];  // 이미 존재하면 그대로 사용
     } else {
         const id = crypto.randomUUID();
-        document.cookie = `${key}=${id}; path=/; max-age=31536000`; // 1 year
+
+        // 쿠키 저장
+        document.cookie = `${key}=${id}; path=/; max-age=31536000`; // 1년
+
+        // ✅ 백엔드에 닉네임 생성 요청 (비동기)
+        fetch("/api/v1/init-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ uuid: id })
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("초기 사용자 생성 실패");
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log("닉네임 생성 완료:", data.nickname);
+        })
+        .catch(err => {
+            console.error("init-user 요청 오류:", err);
+        });
+
         return id;
     }
 }
+
 
 // === 클릭 처리 ===
 function handleClick() {
