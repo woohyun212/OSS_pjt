@@ -251,3 +251,40 @@ footer {
 #close-inventory:hover {
   background-color: #f0f0f0;
 }
+
+#click-layout {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+#rank-box {
+  position: fixed;
+  top: 115px;
+  left: 0;
+  width: 300px;
+  height: 400px;
+  background-color: #fff5e1;
+  border: 2px solid #d4a373;
+  border-radius: 16px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  overflow-y: auto;
+
+  /* ✅ 왼쪽에서 화면의 50% 지점으로 이동하고, 다시 본인 너비의 절반만큼 왼쪽으로 당겨서 정중앙 정렬 */
+  left: 50px; /* 원하는 위치로 조정 가능 */
+}
+
+.rank-item {
+  margin-bottom: 1rem;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.rank-item span {
+  float: right;
+  font-weight: normal;
+  color: #555;
+}
