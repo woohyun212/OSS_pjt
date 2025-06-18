@@ -37,7 +37,7 @@ function loadRanking() {
 document.addEventListener("DOMContentLoaded", () => {
   clickImage.addEventListener("click", handleClick);
   setInterval(sendClicksToServer, CLICK_SEND_INTERVAL_MS);
-  loadRanking();  // ✅ 추가
+  setInterval(loadRanking, CLICK_SEND_INTERVAL_MS); // 랭킹 주기적으로 갱신
 });
 
 // === UUID 처리 ===
