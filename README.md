@@ -58,7 +58,7 @@
 
 ---
 
-## 📦 패키지/환경 관리
+## 패키지/환경 관리
 
 `requirements.txt`로 의존성 관리  
 - 새로운 라이브러리 추가 시, 꼭 `pip freeze > requirements.txt` 반영
@@ -87,7 +87,7 @@ AWS 자원은 별도 관리 (예: S3, DynamoDB 설정은 docs 폴더에 정리)
 
 ---
 
-## 🏃‍♀️ 업무 배분/소통
+## 업무 배분/소통
 
 **회의록**  
 - 매 주간 회의 내용은 docs/meeting_notes.md로 기록
